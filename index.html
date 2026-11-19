@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#f2f3f5" />
+    <meta
+      name="description"
+      content="Демонстрационный прототип оформления ДМС для бизнеса."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'"
+    />
+    <title>ДМС для бизнеса · Демонстрационный прототип</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="canvas">
+        <aside id="side"></aside>
+        <header id="header"></header>
+        <main id="content" tabindex="-1"></main>
+        <footer id="bar"></footer>
+      </div>
+    </div>
+    <button id="demo" type="button" aria-label="Демо · Открыть сценарии">
+      Демо · Сценарии
+    </button>
+    <div id="overlay"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
