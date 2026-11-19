@@ -989,3 +989,9 @@ body.lock {
 .mobile .zero-total {
   margin-top: 14px;
 }
+body:not(.mobile) .zero-total {
+  margin-bottom: 33px;
+}
+body:not(.mobile) #canvas[data-stage="review"] #content {
+  padding-bottom: 22px;
+}

@@ -94,6 +94,7 @@ function picture(key, actions = {}, replacements = {}) {
   n.style.width = m.w + "px";
   n.style.height = m.h + "px";
   const img = el("img");
+  img.decoding = "sync";
   img.src = "./assets/" + key + ".webp";
   img.alt = "";
   img.width = m.w;
@@ -281,15 +282,17 @@ function back() {
   else if (page === "store" || page === "policies") scenarios();
   else shop();
 }
-function details() {
+function details(scrollPosition = 0) {
   const key = device + "-details";
-  showModal(
+  const drawer = showModal(
     "ДМС · Программа Пульс здоровья",
     (p) => {
       const n = picture(key, {
         "К оформлению": start,
-        "Договор-оферта добровольного медицинского страхования": () =>
-          documentView("offer", details),
+        "Договор-оферта добровольного медицинского страхования": () => {
+          const beforeDocument = p.scrollTop;
+          documentView("offer", () => details(beforeDocument));
+        },
       });
       hotspot(
         n,
@@ -302,6 +305,7 @@ function details() {
     },
     { drawer: true },
   );
+  if (typeof scrollPosition === "number") drawer.scrollTop = scrollPosition;
 }
 function store() {
   const n = picture(device + "-store", {
@@ -890,10 +894,25 @@ function employeeForm(index = null) {
         fields.append(field);
         controls[key] = input;
         input.addEventListener("input", () => {
-          if (key === "birth" && /^\d{3,8}$/.test(input.value))
-            input.value = input.value
-              .replace(/^(\d{2})(\d{1,2})(\d{0,4})$/, "$1.$2.$3")
-              .replace(/\.$/, "");
+          if (key === "birth") {
+            const beforeCaret = input.value
+              .slice(0, input.selectionStart)
+              .replace(/\D/g, "").length;
+            const digits = input.value.replace(/\D/g, "").slice(0, 8);
+            const formatted = [
+              digits.slice(0, 2),
+              digits.slice(2, 4),
+              digits.slice(4),
+            ]
+              .filter(Boolean)
+              .join(".");
+            if (input.value !== formatted) {
+              input.value = formatted;
+              const caret =
+                beforeCaret + Number(beforeCaret > 2) + Number(beforeCaret > 4);
+              input.setSelectionRange(caret, caret);
+            }
+          }
           error.textContent = "";
           input.removeAttribute("aria-invalid");
           banner.textContent = "";
@@ -1380,6 +1399,7 @@ function duplicateDemo(insured) {
   f.requestSubmit();
 }
 function render() {
+  document.getElementById("canvas").dataset.stage = page;
   main.replaceChildren();
   $("#side").replaceChildren();
   $("#header").replaceChildren();
@@ -1390,7 +1410,13 @@ function render() {
     hotspot(hdr, "Вернуться", [0, 0, 62, 56], back);
   $("#header").append(hdr);
   if (device === "d") {
-    const n = picture("d-side");
+    const sideKey =
+      {
+        calculate: "d-side-calc",
+        review: "d-side-review",
+        policies: "d-side-policies",
+      }[page] || "d-side";
+    const n = picture(sideKey);
     const row = art["d-side"].texts.find(
       (t) => t.v === "Страховки для бизнеса",
     );
